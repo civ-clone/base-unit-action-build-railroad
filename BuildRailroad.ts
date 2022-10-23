@@ -1,15 +1,12 @@
-import { Moved, IMovedRegistry } from '@civ-clone/core-unit/Rules/Moved';
-import {
-  MovementCost,
-  IMovementCostRegistry,
-} from '@civ-clone/core-unit/Rules/MovementCost';
 import BuildingRailroad from './Rules/BuildingRailroad';
 import DelayedAction from '@civ-clone/core-unit/DelayedAction';
+import Moved from '@civ-clone/core-unit/Rules/Moved';
+import MovementCost from '@civ-clone/core-unit/Rules/MovementCost';
 import Railroad from '@civ-clone/base-tile-improvement-railroad/Railroad';
 
 export class BuildRailroad extends DelayedAction {
   perform(): void {
-    const [moveCost]: number[] = (this.ruleRegistry() as IMovementCostRegistry)
+    const [moveCost]: number[] = this.ruleRegistry()
       .process(MovementCost, this.unit(), this)
       .sort((a: number, b: number): number => b - a);
 
@@ -21,7 +18,7 @@ export class BuildRailroad extends DelayedAction {
       BuildingRailroad
     );
 
-    (this.ruleRegistry() as IMovedRegistry).process(Moved, this.unit(), this);
+    this.ruleRegistry().process(Moved, this.unit(), this);
   }
 }
 

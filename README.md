@@ -1,4 +1,3 @@
 # base-unit-action-build-railroad
 
-This is a template repo.
-
+This package provides the `BuildRailroad` `Action` for `Unit`s.
