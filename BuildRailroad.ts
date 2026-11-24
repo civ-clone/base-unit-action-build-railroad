@@ -1,3 +1,4 @@
+import { BusyContext } from '@civ-clone/core-unit/BusyRegistry';
 import BuildingRailroad from './Rules/BuildingRailroad';
 import DelayedAction from '@civ-clone/core-unit/DelayedAction';
 import Moved from '@civ-clone/core-unit/Rules/Moved';
@@ -26,9 +27,20 @@ export class BuildRailroad extends DelayedAction {
 registerDelayedAction({
   BusyRule: BuildingRailroad,
   handler: COMPLETE,
-  action: (unit: Unit) => new BuildRailroad(unit.tile(), unit.tile(), unit),
-  complete: (unit: Unit) => {
-    new Railroad(unit.tile());
+  // Built from the game the unit is loaded into, so finishing after a load writes where that game looks
+  //  (civ-clone/web-renderer#248).
+  action: (unit: Unit, context: BusyContext) =>
+    new BuildRailroad(
+      unit.tile(),
+      unit.tile(),
+      unit,
+      context.rules,
+      context.turn,
+      context.pendingEffects
+    ),
+  // Through the rules the action was built with, the game's own, so its `Built` rules register it there.
+  complete: (unit: Unit, pendingEffect, action) => {
+    new Railroad(unit.tile(), action.ruleRegistry());
   },
 });
 

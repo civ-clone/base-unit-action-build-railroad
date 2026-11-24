@@ -24,9 +24,12 @@ exports.BuildRailroad = BuildRailroad;
 (0, registerDelayedAction_1.default)({
     BusyRule: BuildingRailroad_1.default,
     handler: exports.COMPLETE,
-    action: (unit) => new BuildRailroad(unit.tile(), unit.tile(), unit),
-    complete: (unit) => {
-        new Railroad_1.default(unit.tile());
+    // Built from the game the unit is loaded into, so finishing after a load writes where that game looks
+    //  (civ-clone/web-renderer#248).
+    action: (unit, context) => new BuildRailroad(unit.tile(), unit.tile(), unit, context.rules, context.turn, context.pendingEffects),
+    // Through the rules the action was built with, the game's own, so its `Built` rules register it there.
+    complete: (unit, pendingEffect, action) => {
+        new Railroad_1.default(unit.tile(), action.ruleRegistry());
     },
 });
 exports.default = BuildRailroad;
